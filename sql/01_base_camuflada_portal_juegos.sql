@@ -1,0 +1,225 @@
+﻿SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+SET NOCOUNT ON;
+
+BEGIN TRY
+    BEGIN TRAN;
+
+    IF OBJECT_ID(N'dbo.T_DEMO_A_01', N'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.T_DEMO_A_01
+        (
+            PK_DEMO_A           BIGINT IDENTITY(1,1) NOT NULL,
+            COD_DEMO_A        NVARCHAR(16)         NOT NULL,
+            COD_DEMO_B NVARCHAR(16)         NOT NULL,
+            FLG_DEMO_A       BIT                  NOT NULL CONSTRAINT DF_T_DEMO_A_01_FLG_DEMO_A DEFAULT (0),
+            FLG_DEMO_B         BIT                  NOT NULL CONSTRAINT DF_T_DEMO_A_01_FLG_DEMO_B DEFAULT (1),
+            VAL_DEMO_A       INT                  NOT NULL,
+            TS_DEMO_E        DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_01_TS_DEMO_E DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_F         DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_01_TS_DEMO_F  DEFAULT (SYSUTCDATETIME()),
+            CONSTRAINT PK_T_DEMO_A_01 PRIMARY KEY CLUSTERED (PK_DEMO_A),
+            CONSTRAINT UQ_T_DEMO_A_01_COD_DEMO_B UNIQUE (COD_DEMO_B),
+            CONSTRAINT CK_T_DEMO_A_01_VAL_DEMO_A CHECK (VAL_DEMO_A BETWEEN 3 AND 12)
+        );
+    END;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM sys.indexes
+        WHERE object_id = OBJECT_ID(N'dbo.T_DEMO_A_01')
+          AND name = N'IX_T_DEMO_A_01_01'
+    )
+    BEGIN
+        CREATE NONCLUSTERED INDEX IX_T_DEMO_A_01_01
+            ON dbo.T_DEMO_A_01 (FLG_DEMO_B, FLG_DEMO_A, VAL_DEMO_A, COD_DEMO_B);
+    END;
+
+    IF OBJECT_ID(N'dbo.T_DEMO_A_02', N'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.T_DEMO_A_02
+        (
+            PK_DEMO_B        BIGINT IDENTITY(1,1) NOT NULL,
+            TD_DEMO_A      DATE                 NOT NULL,
+            FK_DEMO_A           BIGINT               NOT NULL,
+            FLG_DEMO_B         BIT                  NOT NULL CONSTRAINT DF_T_DEMO_A_02_FLG_DEMO_B DEFAULT (1),
+            TS_DEMO_D DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_02_TS_DEMO_D DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_E        DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_02_TS_DEMO_E DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_F         DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_02_TS_DEMO_F  DEFAULT (SYSUTCDATETIME()),
+            CONSTRAINT PK_T_DEMO_A_02 PRIMARY KEY CLUSTERED (PK_DEMO_B),
+            CONSTRAINT UQ_T_DEMO_A_02_TD_DEMO_A UNIQUE (TD_DEMO_A),
+            CONSTRAINT FK_T_DEMO_A_02_FK_DEMO_A FOREIGN KEY (FK_DEMO_A) REFERENCES dbo.T_DEMO_A_01(PK_DEMO_A)
+        );
+    END;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM sys.indexes
+        WHERE object_id = OBJECT_ID(N'dbo.T_DEMO_A_02')
+          AND name = N'IX_T_DEMO_A_02_01'
+    )
+    BEGIN
+        CREATE NONCLUSTERED INDEX IX_T_DEMO_A_02_01
+            ON dbo.T_DEMO_A_02 (TD_DEMO_A, FLG_DEMO_B)
+            INCLUDE (FK_DEMO_A);
+    END;
+
+    IF OBJECT_ID(N'dbo.T_DEMO_F_01', N'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.T_DEMO_F_01
+        (
+            PK_DEMO_C        BIGINT IDENTITY(1,1) NOT NULL,
+            TD_DEMO_A      DATE                 NOT NULL,
+            COD_DEMO_C        NVARCHAR(128)        NOT NULL,
+            DES_DEMO_A        NVARCHAR(256)        NULL,
+            FLG_DEMO_C       BIT                  NOT NULL CONSTRAINT DF_T_DEMO_F_01_FLG_DEMO_C DEFAULT (0),
+            FLG_DEMO_D        BIT                  NOT NULL CONSTRAINT DF_T_DEMO_F_01_FLG_DEMO_D DEFAULT (0),
+            VAL_DEMO_B     INT                  NULL,
+            VAL_DEMO_C  INT                  NOT NULL CONSTRAINT DF_T_DEMO_F_01_VAL_DEMO_C DEFAULT (0),
+            VAL_DEMO_D         INT                  NOT NULL CONSTRAINT DF_T_DEMO_F_01_VAL_DEMO_D DEFAULT (0),
+            TS_DEMO_A      DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_F_01_TS_DEMO_A DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_B         DATETIME2(0)         NULL,
+            TS_DEMO_E        DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_F_01_TS_DEMO_E DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_F         DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_F_01_TS_DEMO_F  DEFAULT (SYSUTCDATETIME()),
+            CONSTRAINT PK_T_DEMO_F_01 PRIMARY KEY CLUSTERED (PK_DEMO_C),
+            CONSTRAINT UQ_T_DEMO_F_01_DIA_USUARIO UNIQUE (TD_DEMO_A, COD_DEMO_C),
+            CONSTRAINT CK_T_DEMO_F_01_VAL_DEMO_B CHECK (VAL_DEMO_B IS NULL OR VAL_DEMO_B BETWEEN 1 AND 6),
+            CONSTRAINT CK_T_DEMO_F_01_VAL_DEMO_C CHECK (VAL_DEMO_C BETWEEN 0 AND 6),
+            CONSTRAINT CK_T_DEMO_F_01_VAL_DEMO_D CHECK (VAL_DEMO_D >= 0)
+        );
+    END;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM sys.indexes
+        WHERE object_id = OBJECT_ID(N'dbo.T_DEMO_F_01')
+          AND name = N'IX_T_DEMO_F_01_01'
+    )
+    BEGIN
+        CREATE NONCLUSTERED INDEX IX_T_DEMO_F_01_01
+            ON dbo.T_DEMO_F_01 (TD_DEMO_A, FLG_DEMO_C, FLG_DEMO_D, VAL_DEMO_D DESC, TS_DEMO_B)
+            INCLUDE (COD_DEMO_C, DES_DEMO_A, VAL_DEMO_B, VAL_DEMO_C);
+    END;
+
+    IF OBJECT_ID(N'dbo.T_DEMO_F_02', N'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.T_DEMO_F_02
+        (
+            PK_DEMO_D           BIGINT IDENTITY(1,1) NOT NULL,
+            FK_DEMO_B        BIGINT               NOT NULL,
+            VAL_DEMO_E          INT                  NOT NULL,
+            COD_DEMO_A        NVARCHAR(16)         NOT NULL,
+            COD_DEMO_B NVARCHAR(16)         NOT NULL,
+            TXT_DEMO_A         NVARCHAR(32)         NOT NULL,
+            FLG_DEMO_E         BIT                  NOT NULL CONSTRAINT DF_T_DEMO_F_02_FLG_DEMO_E DEFAULT (1),
+            FLG_DEMO_F        BIT                  NOT NULL CONSTRAINT DF_T_DEMO_F_02_FLG_DEMO_F DEFAULT (0),
+            TS_DEMO_C     DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_F_02_TS_DEMO_C DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_E        DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_F_02_TS_DEMO_E DEFAULT (SYSUTCDATETIME()),
+            CONSTRAINT PK_T_DEMO_F_02 PRIMARY KEY CLUSTERED (PK_DEMO_D),
+            CONSTRAINT FK_T_DEMO_F_02_FK_DEMO_B FOREIGN KEY (FK_DEMO_B) REFERENCES dbo.T_DEMO_F_01(PK_DEMO_C),
+            CONSTRAINT UQ_T_DEMO_F_02_RONDA_ORDEN UNIQUE (FK_DEMO_B, VAL_DEMO_E),
+            CONSTRAINT CK_T_DEMO_F_02_VAL_DEMO_E CHECK (VAL_DEMO_E BETWEEN 1 AND 6)
+        );
+    END;
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM sys.indexes
+        WHERE object_id = OBJECT_ID(N'dbo.T_DEMO_F_02')
+          AND name = N'IX_T_DEMO_F_02_01'
+    )
+    BEGIN
+        CREATE NONCLUSTERED INDEX IX_T_DEMO_F_02_01
+            ON dbo.T_DEMO_F_02 (FK_DEMO_B, VAL_DEMO_E)
+            INCLUDE (COD_DEMO_B, TXT_DEMO_A, FLG_DEMO_F, TS_DEMO_C);
+    END;
+
+    IF OBJECT_ID(N'dbo.T_DEMO_A_03', N'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.T_DEMO_A_03
+        (
+            PK_PARAMETRO_OCULTO BIGINT IDENTITY(1,1) NOT NULL,
+            COD_DEMO_D       NVARCHAR(100)        NOT NULL,
+            DES_DEMO_B           NVARCHAR(4000)       NOT NULL,
+            FLG_DEMO_B          BIT                  NOT NULL CONSTRAINT DF_T_DEMO_A_03_FLG_DEMO_B DEFAULT (1),
+            TS_DEMO_E         DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_03_TS_DEMO_E DEFAULT (SYSUTCDATETIME()),
+            TS_DEMO_F          DATETIME2(0)         NOT NULL CONSTRAINT DF_T_DEMO_A_03_TS_DEMO_F  DEFAULT (SYSUTCDATETIME()),
+            CONSTRAINT PK_T_DEMO_A_03 PRIMARY KEY CLUSTERED (PK_PARAMETRO_OCULTO),
+            CONSTRAINT UQ_T_DEMO_A_03_COD_DEMO_D UNIQUE (COD_DEMO_D)
+        );
+    END;
+
+    MERGE dbo.T_DEMO_A_03 AS T
+    USING (
+        SELECT N'LONGITUD_OBJETIVO' AS COD_DEMO_D, N'5' AS DES_DEMO_B
+        UNION ALL SELECT N'MAX_INTENTOS', N'6'
+        UNION ALL SELECT N'PUNTOS_BASE', N'100'
+        UNION ALL SELECT N'PENALIZACION_INTENTO_EXTRA', N'10'
+    ) AS S
+      ON T.COD_DEMO_D = S.COD_DEMO_D
+    WHEN NOT MATCHED THEN
+        INSERT (COD_DEMO_D, DES_DEMO_B, FLG_DEMO_B)
+        VALUES (S.COD_DEMO_D, S.DES_DEMO_B, 1);
+
+    IF OBJECT_ID(N'dbo.V_DEMO_C_01', N'V') IS NOT NULL
+        DROP VIEW dbo.V_DEMO_C_01;
+
+    EXEC(N'
+        CREATE VIEW dbo.V_DEMO_C_01
+        AS
+        SELECT
+            B.TD_DEMO_A,
+            B.COD_DEMO_C,
+            B.DES_DEMO_A,
+            B.FLG_DEMO_C,
+            B.FLG_DEMO_D,
+            B.VAL_DEMO_B,
+            B.VAL_DEMO_C,
+            B.VAL_DEMO_D,
+            B.TS_DEMO_A,
+            B.TS_DEMO_B,
+            ROW_NUMBER() OVER (
+                PARTITION BY B.TD_DEMO_A
+                ORDER BY
+                    B.FLG_DEMO_C DESC,
+                    CASE WHEN B.VAL_DEMO_B IS NULL THEN 999 ELSE B.VAL_DEMO_B END ASC,
+                    B.VAL_DEMO_D DESC,
+                    B.TS_DEMO_B ASC,
+                    B.COD_DEMO_C ASC
+            ) AS VAL_POSICION_DIA
+        FROM dbo.T_DEMO_F_01 B;
+    ');
+
+    IF OBJECT_ID(N'dbo.V_DEMO_C_02', N'V') IS NOT NULL
+        DROP VIEW dbo.V_DEMO_C_02;
+
+    EXEC(N'
+        CREATE VIEW dbo.V_DEMO_C_02
+        AS
+        SELECT
+            B.COD_DEMO_C,
+            MAX(B.DES_DEMO_A) AS DES_DEMO_A,
+            COUNT_BIG(1) AS VAL_PARTIDA_TOTAL,
+            SUM(CASE WHEN B.FLG_DEMO_C = 1 THEN 1 ELSE 0 END) AS VAL_PARTIDA_OK,
+            SUM(CASE WHEN B.FLG_DEMO_C = 0 AND B.FLG_DEMO_D = 1 THEN 1 ELSE 0 END) AS VAL_PARTIDA_KO,
+            SUM(B.VAL_DEMO_D) AS VAL_DEMO_D_TOTAL,
+            CAST(AVG(CASE WHEN B.FLG_DEMO_C = 1 THEN CONVERT(DECIMAL(10,2), B.VAL_DEMO_B) END) AS DECIMAL(10,2)) AS VAL_MEDIA_INTENTO_OK,
+            CAST(
+                100.0 * SUM(CASE WHEN B.FLG_DEMO_C = 1 THEN 1 ELSE 0 END)
+                / NULLIF(COUNT_BIG(1), 0)
+                AS DECIMAL(10,2)
+            ) AS PCT_ACIERTO
+        FROM dbo.T_DEMO_F_01 B
+        GROUP BY
+            B.COD_DEMO_C;
+    ');
+
+    COMMIT TRAN;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+        ROLLBACK TRAN;
+
+    DECLARE @TXT_ERROR NVARCHAR(4000) = ERROR_MESSAGE();
+    THROW 50001, @TXT_ERROR, 1;
+END CATCH;
+
