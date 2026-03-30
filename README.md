@@ -1,74 +1,105 @@
-﻿# Daily Word Game Demo
+# Daily Word Game
 
-A full-stack daily word game demo built with **FastAPI**, **React** and **SQL Server**.
+A full-stack daily word game built with **FastAPI**, **React** and **SQL Server** — one puzzle per day, persistent state across attempts, and a complete evaluation and scoring engine.
 
-This project showcases the implementation of a lightweight daily puzzle experience inspired by word-based guessing games. It includes backend services, state persistence, daily assignment logic, attempt evaluation, scoring rules and a polished web interface.
+---
 
 ## Overview
 
-The application delivers one puzzle per day and keeps track of user progress across attempts. It was designed as a compact but complete full-stack demo with a clear separation between backend, frontend and database logic.
+| Layer | Technology | Role |
+|---|---|---|
+| Backend | FastAPI + Python | Game logic, validation, persistence |
+| Frontend | React + TypeScript + Vite | Player interface and session state |
+| Database | SQL Server | Game state and daily assignment persistence |
+
+---
+
+## Architecture
+
+```
+┌─────────────────┐        ┌──────────────────────────────┐
+│  React Frontend  │──────▶│         FastAPI Backend       │
+│  (TypeScript)    │        │                              │
+└─────────────────┘        │  ┌────────────┐              │
+                            │  │  Daily     │              │
+                            │  │  Assignment│              │
+                            │  └─────┬──────┘              │
+                            │        │                     │
+                            │  ┌─────▼──────┐              │
+                            │  │ Validation  │              │
+                            │  │  Engine     │              │
+                            │  └─────┬──────┘              │
+                            │        │                     │
+                            │  ┌─────▼──────┐              │
+                            │  │  Scoring &  │              │
+                            │  │  State      │              │
+                            │  └─────┬──────┘              │
+                            └────────┼─────────────────────┘
+                                     │
+                                SQL Server
+                            (persistent game state)
+```
+
+- **Daily assignment logic** ensures every player gets the same puzzle each day
+- **Validation engine** evaluates each attempt and returns pattern feedback
+- **State persistence** tracks attempts, scores and session progress in SQL Server
+- **Frontend** renders the board and interaction flow, consuming the backend API
+
+---
 
 ## Features
 
-- Daily puzzle assignment
-- Attempt validation and pattern evaluation
-- Persistent game state
-- Scoring and attempt limits
-- Backend service-oriented structure
-- React frontend with a lightweight UI
-- SQL-based persistence layer
-- Portfolio-safe sanitized version for public sharing
+- Daily puzzle assignment with consistent cross-session delivery
+- Attempt validation with pattern evaluation feedback
+- Persistent game state across sessions
+- Scoring system with attempt limits
+- Service-oriented backend structure
+- Lightweight, focused React frontend
+- SQL-backed persistence layer
 
-## Tech Stack
-
-### Backend
-- FastAPI
-- Python
-- pyodbc
-
-### Frontend
-- React
-- TypeScript
-- Vite
-
-### Database
-- SQL Server
-
-### Tooling
-- PowerShell
-- Git / GitHub
+---
 
 ## Project Structure
 
-```text
-backend/   API, services and persistence logic
-frontend/  React user interface
-sql/       SQL scripts for data model and setup
-scripts/   PowerShell helper scripts
-docs/      Supporting documentation
-Architecture Notes
+```
+backend/    API, services and persistence logic
+frontend/   React user interface
+sql/        SQL scripts for data model and setup
+scripts/    PowerShell helper scripts
+docs/       Supporting documentation
+```
 
-The project is split into two main layers:
+---
 
-Backend: handles daily assignment, validation, submission, persistence and game state retrieval
-Frontend: renders the board, current session state and player interaction flow
+## Tech Stack
 
-The backend follows a service-based structure, while the frontend keeps the interaction layer lightweight and focused.
+**Backend** — FastAPI · Python · pyodbc
 
-Portfolio Note
+**Frontend** — React · TypeScript · Vite
 
-This repository is a sanitized portfolio version of the project. Sensitive infrastructure details, internal references and environment-specific values were removed or neutralized before publication.
+**Database** — SQL Server
 
-Why this project is relevant
+**Tooling** — PowerShell · Git
 
-This demo highlights practical skills in:
+---
 
-full-stack development
-API design
-frontend/backend integration
-SQL-backed application state
-portfolio-safe project packaging
-deployment-oriented thinking
-Status
+## Technical Highlights
 
-Portfolio-ready demo version.
+- **Service-oriented backend**: game logic is split into discrete services (assignment, validation, scoring, state) rather than packed into route handlers — clean separation of concerns and easy to extend
+- **Daily assignment engine**: deterministic daily puzzle delivery ensuring all players receive the same word on the same day, with SQL-backed tracking
+- **Attempt evaluation**: pattern-matching validation engine that returns positional feedback per character, driving the frontend board state
+- **Full-stack state management**: game progress persisted server-side via SQL Server, decoupled from frontend session storage
+
+---
+
+## Configuration
+
+This repository is a **sanitized portfolio version**. Sensitive infrastructure details, internal references and environment-specific values have been removed before publication.
+
+Adapt connection strings and environment config to your target environment before running locally.
+
+---
+
+## Stack
+
+`FastAPI` `React` `TypeScript` `Vite` `SQL Server` `Python` `REST API` `Full-Stack`
